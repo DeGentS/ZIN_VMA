@@ -1,0 +1,14 @@
+{
+    "builtin": "False",
+    "default_enabled": "True",
+    "type": "extension",
+    "rocket_mode_compatible": "False",
+    "name": "ZIN_VMA",
+    "description": "Custom ribbon voor project ZIN",
+    "author": "Sean De Gent",
+    "author_profile": "https://github.com//DeGentS",
+    "url": "https://github.com/DeGentS/ZIN_VMA",
+    "website": "",
+    "image": "",
+    "dependencies": []
+}
