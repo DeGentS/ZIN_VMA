@@ -1,2 +1,2 @@
-# DeGent_BIM
+# BIMPLAN_BIM
  PyRevit extensions
