@@ -2,18 +2,20 @@
 
 __title__ = "Import subcontractor"
 __author__ = "Sean De Gent"
-__doc__ = """Version = 1.0
+__doc__ = """Version = 1.1
 Date    = 18-09-23
 _____________________________________________________________________
 Description:
 
-Hiermee zal men de parameter OM_Subcontractor voorzien van een waarde conform de aangeleverde excel-file
-
+Hiermee zal men de parameter OM_Subcontractor voorzien 
+van een waarde conform de aangeleverde excel-file
 _____________________________________________________________
 Last update:
 
 - [18-09-23] 1.0 RELEASE
-
+- [25-10-23] 1.1 volgende parameters zullen aangepast worden bij import; 
+        - OMI_CTE_Element ID
+        - OM_subcontractor
 
 author  = Sean De Gent i.o.v. BimPlan
 
@@ -62,13 +64,14 @@ def read_excel_data(excel_file_path):
     # Lees de gegevens van het werkblad en sla deze op in de 'data' lijst
     for row in range(2, last_row + 1):
         element_id = worksheet.Cells(row, 2).Value2
-        subcontractor = worksheet.Cells(row, 6).Value2
+        OMI_CTE_Element = worksheet.Cells(row, 3).Value2
+        subcontractor = worksheet.Cells(row, 5).Value2
 
         # Controleer of de element-ID als geheel getal kan worden behandeld
         if isinstance(element_id, (int, float)):
             element_id = int(element_id)
 
-        data.append((element_id, subcontractor))
+        data.append((element_id, subcontractor, OMI_CTE_Element))
 
     # Sluit het Excel-bestand
     workbook.Close()
@@ -87,19 +90,28 @@ def update_element_subcontractor(data):
         transaction.Start()
 
         # Loop door de lijst met gegevens en pas het commentaarveld aan voor elk element
-        for element_id, element_subcontractor in data:
+        for element_id, element_subcontractor, element_OMI_CTE_Element in data:
             try:
                 # Zoek het element op basis van het element-ID
                 element_id_int = int(element_id)
                 element = doc.GetElement(ElementId(element_id_int))
 
-                # Controleer of het element bestaat en of het een commentaarveld heeft dat kan worden gewijzigd
+                # Controleer of het element bestaat en of het OM_subcontractor heeft dat kan worden gewijzigd
                 if element and hasattr(element, "get_Parameter"):
                     parameter_name = "OM_subcontractor"
                     parameter = element.LookupParameter(parameter_name)
                     if parameter and not parameter.IsReadOnly:
-                        # Pas het commentaarveld aan met de bijgewerkte waarde
+                        # Pas het OM_subcontractor aan met de bijgewerkte waarde
                         parameter.Set(str(element_subcontractor))
+
+                # Controleer of het element bestaat en of het  OMI_CTE_Element heeft dat kan worden gewijzigd
+                if element and hasattr(element, "get_Parameter"):
+                    parameter_name = "OMI_CTE_Element ID"
+                    parameter = element.LookupParameter(parameter_name)
+                    if parameter and not parameter.IsReadOnly:
+                        # Pas het OMI_CTE_Element aan met de bijgewerkte waarde
+                        parameter.Set(str(element_OMI_CTE_Element))
+
             except Exception as e:
                 print("Fout bij het bijwerken van element " + str(element_id) + ": " + str(e))
 
