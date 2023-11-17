@@ -48,21 +48,25 @@ Opening = 'Opening'
 element_guid = None
 
 
-t.Start()
 
-try:
-    for gm in genericmodels:
-        if gm.SuperComponent is None:
-            family_name = gm.get_Parameter(BuiltInParameter.ELEM_FAMILY_PARAM).AsValueString()
-            if Opening in family_name:
-                omi_host_id_param = gm.LookupParameter("OMI_CTE_Host Element ID")
-                host = gm.HostFace
-                if host is not None and omi_host_id_param is not None:
-                    linked_element_id = host.LinkedElementId
-                    if linked_element_id != ElementId.InvalidElementId:
-                        omi_host_id_param.Set(str(linked_element_id.IntegerValue))
-    t.Commit()
 
-except Exception as e:
-    print("Fout: {}".format(e))
-    t.RollBack()
+for gm in genericmodels:
+    if gm.SuperComponent is None:
+        family_name = gm.get_Parameter(BuiltInParameter.ELEM_FAMILY_PARAM).AsValueString()
+        if Opening in family_name:
+            omi_host_id_param = gm.LookupParameter("OMI_CTE_Host Element ID")
+            host = gm.HostFace
+            t.Start()
+            if host is not None:
+                linked_element_id = host.LinkedElementId
+                # if linked_element_id != ElementId.InvalidElementId:
+                omi_host_id_param.Set(linked_element_id)
+
+            if host is None:
+                omi_host_id_param.Set("N/A")
+
+            t.Commit()
+#
+# except Exception as e:
+#     print("Fout: {}".format(e))
+#     t.RollBack()

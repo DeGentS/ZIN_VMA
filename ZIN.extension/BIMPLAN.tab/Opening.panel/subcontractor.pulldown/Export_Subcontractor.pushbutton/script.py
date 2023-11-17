@@ -178,6 +178,7 @@ def main():
     table.Name = "GenericModelData"
 
 
+
     # Sla het Excel-bestand op en sluit Excel
     workbook.SaveAs(excel_file_path, XlFileFormat.xlOpenXMLWorkbook)
     workbook.Close()
